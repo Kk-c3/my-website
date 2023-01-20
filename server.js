@@ -4,9 +4,9 @@
 *  No part of this assignment has been copied manually or electronically from any other source
 *  (including web sites) or distributed to other students.
 * 
-*  Name: ______________________ Student ID: ______________ Date: ________________
+*  Name: _Kranti KC _ Student ID: _146277215_ Date: _Jan 20, 2023_
 *
-*  Online (Cyclic) URL: _______________________________________________________
+*  Online (Cyclic) URL: _https://prickly-crow-pinafore.cyclic.app_
 *
 ********************************************************************************/ 
 
