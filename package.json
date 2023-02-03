@@ -1,5 +1,23 @@
 {
   "dependencies": {
     "express": "^4.18.2"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "server.js",
+  "version": "1.0.0",
+  "description": "second assignment",
+  "main": "server.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kk-c3/my-website.git"
+  },
+  "author": "Kranti KC",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kk-c3/my-website/issues"
+  },
+  "homepage": "https://github.com/Kk-c3/my-website#readme"
 }
