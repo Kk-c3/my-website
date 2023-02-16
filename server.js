@@ -122,7 +122,7 @@ app.get("/blog", (req, res) => {
     }
   });
   
-  app.get("/post/:id", (req, res) => {
+  app.get("/post/:id", (req, res) => {//new route
     const postId = parseInt(req.params.id);
     blogService
       .getPostById(postId)
