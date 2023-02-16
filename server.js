@@ -15,7 +15,24 @@ var app = express();
 var fs = require("fs");
 var path = require("path");
 const blogService = require("./blog-service.js");
+const multer = require("multer");
+const cloudinary = require('cloudinary').v2
+const streamifier = require('streamifier')
+
 var HTTP_PORT = process.env.PORT || 8080;
+
+//config:
+
+cloudinary.config({
+  cloud_name: 'dxxq5xxg8',
+  api_key: '657455241634879',
+  api_secret: 't8GQLv-q0iRIUKWsWg5yl3Taqmo',
+  secure: true
+});
+
+//multer
+const upload = multer(); // no { storage: storage } since we are not using disk storage
+
 
 // call this function after the http server starts listening for requests
 function onHttpStart() {
@@ -34,6 +51,50 @@ res.redirect("/about");
 app.get("/about", function(req,res){
 res.sendFile(path.join(__dirname, "/views/about.html"));
 });
+// new route to listen on /posts/add
+app.get("/posts/add", function(req, res) {
+  res.sendFile(path.join(__dirname, "/views/addPost.html"));
+});
+
+// route to add a new blog post
+app.post("/posts/add", upload.single("featureImage"), function(req, res) {
+  let streamUpload = (req) => {
+    return new Promise((resolve, reject) => {
+      let stream = cloudinary.uploader.upload_stream((error, result) => {
+        if (result) {
+          resolve(result);
+        } else {
+          reject(error);
+        }
+      });
+      streamifier.createReadStream(req.file.buffer).pipe(stream);
+    });
+  };
+
+  async function upload(req) {
+    let result = await streamUpload(req);
+    console.log(result);
+    return result;
+  }
+
+  upload(req).then((uploaded) => {
+    // add the new post
+    blogService.addPost({
+      title: req.body.title,
+      body: req.body.body,
+      category: req.body.category,
+      published: req.body.published,
+      featureImage: uploaded.url,
+      date: new Date()
+    }).then(() => {
+      res.redirect("/posts");
+    }).catch((err) => {
+      res.status(500).json({ message: err });
+    });
+  }).catch((err) => {
+    res.status(500).json({ message: err });
+  });
+});
 
 app.get("/blog", (req, res) => {
   blogService
@@ -43,10 +104,30 @@ app.get("/blog", (req, res) => {
   });
   
   app.get("/posts", (req, res) => {
-  blogService
-  .getAllPosts()
-  .then((data) => res.json(data))
-  .catch((err) => res.status(500).json({ message: err }));
+    if (req.query.category) {
+      blogService
+        .getPostsByCategory(req.query.category)
+        .then((data) => res.json(data))
+        .catch((err) => res.status(500).json({ message: err }));
+    } else if (req.query.minDate) {
+      blogService
+        .getPostsByMinDate(req.query.minDate)
+        .then((data) => res.json(data))
+        .catch((err) => res.status(500).json({ message: err }));
+    } else {
+      blogService
+        .getAllPosts()
+        .then((data) => res.json(data))
+        .catch((err) => res.status(500).json({ message: err }));
+    }
+  });
+  
+  app.get("/post/:id", (req, res) => {
+    const postId = parseInt(req.params.id);
+    blogService
+      .getPostById(postId)
+      .then((data) => res.json(data))
+      .catch((err) => res.status(500).json({ message: err }));
   });
   
   app.get("/categories", (req, res) => {
