@@ -83,7 +83,7 @@ module.exports = {
   getPublishedPosts,
   getCategories,
   addPost,
-  getPostsByCategory,
-  getPostsByMinDate,
-  getPostById,
+  getPostsByCategory,// new function
+  getPostsByMinDate,// new function
+  getPostById,// new function
 };
